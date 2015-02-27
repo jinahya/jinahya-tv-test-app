@@ -5,7 +5,7 @@
 
   <!-- The Basics -->
   <groupId>com.github.jinahya</groupId>
-  <artifactId>jinahya-tv-test-xlet</artifactId>
+  <artifactId>jinahya-tv-test-application</artifactId>
   <version>0.1-SNAPSHOT</version>
   <packaging>jar</packaging>
   <parent>
@@ -55,12 +55,6 @@
           <groupId>junit</groupId>
           <artifactId>junit</artifactId>
         </exclusion>
-        <!--
-        <exclusion>
-          <groupId>org.hamcrest</groupId>
-          <artifactId>hamcrest-core</artifactId>
-        </exclusion>
-        -->
       </exclusions>
     </dependency>
     <dependency>
@@ -107,7 +101,7 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-compiler-plugin</artifactId>
-          <version>3.1</version>
+          <version>3.2</version>
         </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
@@ -181,6 +175,26 @@
             <phase>package</phase>
             <goals>
               <goal>single</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-antrun-plugin</artifactId>
+        <version>1.8</version>
+        <executions>
+          <execution>
+            <id>copy-jar-to-zip</id>
+            <phase>pre-integration-test</phase> <!-- just after package -->
+            <configuration>
+              <target>
+                <copy file="${project.build.directory}/${project.build.finalName}-proguard.${project.packaging}"
+                      tofile="${project.build.directory}/${project.build.finalName}-deploy.zip"/>
+              </target>
+            </configuration>
+            <goals>
+              <goal>run</goal>
             </goals>
           </execution>
         </executions>
@@ -311,7 +325,7 @@
 
   <!-- More Project Information -->
   <name>${project.artifactId}</name>
-  <url>http://jinahya.github.io/jinahya-tv-test-xlet/sites/${project.version}</url>
+  <url>http://jinahya.github.io/jinahya-tv-test-application/sites/${project.version}</url>
   <inceptionYear>2014</inceptionYear>
   <licenses>
     <license>
@@ -339,9 +353,9 @@
   <ciManagement />
   <mailingLists />
   <scm>
-    <connection>scm:git:git@github.com:jinahya/jinahya-tv-test-xlet.git</connection>
-    <developerConnection>scm:git:git@github.com:jinahya/jinahya-tv-test-xlet.git</developerConnection>
-    <url>https://github.com/jinahya/jinahya-tv-test-xlet</url>
+    <connection>scm:git:git@github.com:jinahya/jinahya-tv-test-application.git</connection>
+    <developerConnection>scm:git:git@github.com:jinahya/jinahya-tv-test-application.git</developerConnection>
+    <url>https://github.com/jinahya/jinahya-tv-test-application</url>
     <tag>HEAD</tag>
   </scm>
   <prerequisites>

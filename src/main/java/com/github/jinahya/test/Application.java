@@ -25,6 +25,7 @@ import java.util.Iterator;
 import java.util.List;
 import javax.media.Player;
 import javax.tv.service.selection.ServiceContextException;
+import javax.tv.service.selection.ServiceContextFactory;
 import javax.tv.xlet.Xlet;
 import javax.tv.xlet.XletContext;
 import javax.tv.xlet.XletStateChangeException;
@@ -39,31 +40,43 @@ import net.sf.microlog.core.LoggerFactory;
 public class Application implements Xlet {
 
 
-    private static final Logger logger
-        = LoggerFactory.getLogger(Application.class);
-
-
     public void initXlet(final XletContext xletContext)
         throws XletStateChangeException {
 
         logger.debug("initXlet(" + xletContext + ")");
 
-        XletContextHolder.set(xletContext);
+        XletContextHolder.getInstance().set(xletContext);
+        logger.debug("xletContextHolder.holdee: "
+                     + XletContextHolder.getXletContext());
     }
 
 
     public void startXlet() throws XletStateChangeException {
 
         logger.debug("startXlet()");
+        logger.debug("xletContextHolder.holdee: "
+                     + XletContextHolder.getXletContext());
 
         {
-            logger.debug("collecting players...");
+            logger.debug("collecting players from xlet context...");
             final List players = new ArrayList();
             try {
-                Players.collect(XletContextHolder.get(), players);
+                Players.collect(
+                    (XletContext) XletContextHolder.getInstance().get(),
+                    players);
             } catch (final ServiceContextException sce) {
                 logger.error("failed to collect players", sce);
             }
+            for (final Iterator i = players.iterator(); i.hasNext();) {
+                final Player player = (Player) i.next();
+                logger.debug("player: " + player);
+            }
+        }
+
+        {
+            logger.debug("collecting players from service context factory...");
+            final List players = new ArrayList();
+            Players.collect(ServiceContextFactory.getInstance(), players);
             for (final Iterator i = players.iterator(); i.hasNext();) {
                 final Player player = (Player) i.next();
                 logger.debug("player: " + player);
@@ -75,6 +88,8 @@ public class Application implements Xlet {
     public void pauseXlet() {
 
         logger.debug("pauseXlet()");
+        logger.debug("xletContextHolder.holdee: "
+                     + XletContextHolder.getXletContext());
     }
 
 
@@ -82,9 +97,14 @@ public class Application implements Xlet {
         throws XletStateChangeException {
 
         logger.debug("destroyXlet(" + unconditional + ")");
+        logger.debug("xletContextHolder.holdee: "
+                     + XletContextHolder.getXletContext());
 
-        XletContextHolder.set(null);
+        XletContextHolder.getInstance().set(null);
     }
+
+
+    private transient final Logger logger = LoggerFactory.getLogger(getClass());
 
 
 }
